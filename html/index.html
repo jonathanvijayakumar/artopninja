@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 
+<!-- This page shows JSON data containing AUTOSAR elements as a visual tree -->
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -107,37 +109,14 @@
                 <button class="btn btn-sm btn-outline-secondary">Share</button>
                 <button class="btn btn-sm btn-outline-secondary">Export</button>
               </div>
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <span data-feather="calendar"></span>
-                This week
-              </button>
             </div>
           </div>
-
-          <!-- <div class="table-responsive">
-          <table class="table table-striped table-sm">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Header</th>
-                <th>Header</th>
-                <th>Header</th>
-                <th>Header</th>
-              </tr>
-            </thead>
-            <tbody id="table_point">
-
-            </tbody>
-          </table>
-        </div> -->
         </div>
       </main>
     </div>
   </div>
 
-  <!-- Bootstrap core JavaScript
-    ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
+  <!-- Script part, don't mess, be careful! -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
@@ -148,123 +127,143 @@
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
   <script>
+    //Set in this scope by the open button, for global use
     var file_name = "";
+
+    // Colors are randomly chosen for divs
     var colors = ['p-3 mb-2 bg-primary text-white',
       'p-3 mb-2 bg-secondary text-white',
       'p-3 mb-2 bg-light text-dark',
       'p-3 mb-2 bg-dark text-white',
       'p-3 mb-2 bg-white text-dark'];
 
-    $("#open_file").click(function () {
-      file_name = $("#file_name").val();
-      $("#overview_button").trigger("click");
+    $("#file_name").keyup(function (event) {
+      if (event.keyCode === 13) {
+        file_name = $("#file_name").val();
+
+        if (!(/^[a-z]:((\\|\/)[a-z0-9\s_@\-^!#$%&+={}\[\]]+)+\.arxml$/i.test(file_name))) {
+          alert("File path is invalid");
+        } else {
+          $("#overview_button").trigger("click");
+        }
+      }
     });
 
+
+    //For the file 'open' button
+    $("#open_file").click(function () {
+      file_name = $("#file_name").val();
+
+      if (!(/^[a-z]:((\\|\/)[a-z0-9\s_@\-^!#$%&+={}\[\]]+)+\.arxml$/i.test(file_name))) {
+        alert("File path is invalid");
+      } else {
+        $("#overview_button").trigger("click");
+      }
+    });
+
+    //For the navigation click
     $("#overview_button").click(function () {
       if (file_name != "") {
+
+        //Async request to parse the chosen file and get AUTOSAR data as JSON objects
         $.ajax({
           type: "GET", url: "http://localhost:8000/", data: { file: file_name }, success: function (result) {
 
             var data = JSON.parse(JSON.stringify(result))
             var graph = $(".entry-point");
 
+            //Recursive function
             function rec_append(requestData, parentDiv) {
-              console.log('requestData is ', requestData);
-              console.log('parentDiv is ', parentDiv);
               var temp_parent_details;
 
               $.each(requestData, function (index, jsonElement) {
-                console.log('jsonElement is ', jsonElement);
-                console.log('its type is ', typeof jsonElement);
 
                 if (typeof jsonElement === 'string') {
+
                   //Element construction
-
                   //Name and other details in the form of a : delimited string
-
                   var splitString = jsonElement.split(':');
 
+                  // This is the part that's appended to one-another to construct a nice looking tree strcuture! 
+                  // ARXML -> Py -> JSON -> HTML CSS
                   var details = document.createElement("details");
+                  details.className = colors[Math.floor(Math.random() * 6)] + ' rounded';
+
+                  details.style = "margin: 12px;";
                   var summary = document.createElement("summary");
+
                   summary.innerText = splitString[0];
                   details.append(summary);
-                  details.className = colors[Math.floor(Math.random() * 6)] + ' rounded';
-                  details.style = "margin: 12px;";
                   parentDiv.append(details);
 
                   var kbd = document.createElement("kbd");
                   kbd.innerText = splitString[1];
+
                   summary.append(' ');
                   summary.append(kbd);
 
                   var div = document.createElement("div");
-                  div.className = "col";
+                  div.className = "";
+
                   details.append(div);
                   temp_parent_details = div;
 
                   var dl = document.createElement("dl");
                   dl.className = "row";
+
                   dl.style = "margin-top: 12px;";
                   div.append(dl);
 
                   var dt = document.createElement("dt");
                   dt.className = "col-sm-1";
+
                   dt.innerText = "Path";
                   dl.append(dt);
 
                   var dd = document.createElement("dd");
                   dd.className = "col-sm-11";
+
                   dd.innerText = splitString[2];
                   dl.append(dd);
 
                   var dt2 = document.createElement("dt");
                   dt2.className = "col-sm-1";
+
                   dt2.innerText = "Type";
                   dl.append(dt2);
 
                   var dd2 = document.createElement("dd");
                   dd2.className = "col-sm-11";
+
                   dd2.innerText = splitString[1];
                   dl.append(dd2);
 
+                  var dt3 = document.createElement("dt");
+                  dt3.className = "col-sm-1";
+
+                  dt3.innerText = "Sub-Elements:";
+                  dl.append(dt3);
+
+                  //--------------------------------------------
+
                 } else if (Array.isArray(jsonElement)) {
                   if (typeof jsonElement[0] === 'object') {
+
                     $.each(jsonElement, function (index, jsonChildElement) {
+                      //Recursive call for arrays
                       rec_append(jsonChildElement, temp_parent_details);
+
                     });
+
                   } else {
+                    //Recursive call for strings
                     rec_append(jsonElement, temp_parent_details);
                   }
                 }
-
-                //                 var html = `<details style="margin: 12px;">
-                // <summary>`+ value['name'] + `  <kbd>` + value['type'] + `</kbd></summary>
-                // <p></p><div class="col">
-                // <dl class="">
-                // <dt class="col-sm-1">Path</dt>
-                // <dd class="col-sm-11">`+ value['path'] + `</dd>
-
-                // <dt class="col-sm-1">Type</dt>
-                // <dd class="col-sm-11">`+ value['type'] + `</dd>
-                // </dl>
-                // </div><p></p>
-                // <details style="margin: 12px;">
-                // <summary>`+ value['name'] + `  <kbd>` + value['type'] + `</kbd></summary>
-                // <p></p><div class="col">
-                // <dl class="row">
-                // <dt class="col-sm-1">Path</dt>
-                // <dd class="col-sm-11">`+ value['path'] + `</dd>
-
-                // <dt class="col-sm-1">Type</dt>
-                // <dd class="col-sm-11">`+ value['type'] + `</dd>
-                // </dl>
-                // </div><p></p>
-                // </details>
-                // </details>`;
-
               });
             }
 
+            //Tree construction function
             rec_append(data, graph);
 
           }
