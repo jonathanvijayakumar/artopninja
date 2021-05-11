@@ -1,0 +1,3 @@
+include Examples/*
+include Examples/generated/*
+include autosarfactory/resources/*

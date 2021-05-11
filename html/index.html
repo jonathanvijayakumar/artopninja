@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+  <title>AUTOPy Explorer v1.0</title>
+
+  <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/dashboard/">
+
+  <!-- Bootstrap core CSS -->
+  <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="https://getbootstrap.com/docs/4.0/examples/dashboard/dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">AUTO-Py Suite</a>
+    <input class="form-control form-control-dark w-100" id="file_name" type="text" placeholder="ARXML Path"
+      aria-label="ARXML Path">
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" id="open_file" href="#">Open</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a id="overview_button" class="nav-link active" href="#">
+                <span data-feather="home"></span>
+                Overview <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file"></span>
+                Edit
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="shopping-cart"></span>
+                Generate
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="users"></span>
+                Templates
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="bar-chart-2"></span>
+                Merge
+              </a>
+            </li>
+          </ul>
+
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Manage Extracts</span>
+            <a class="d-flex align-items-center text-muted" href="#">
+              <span data-feather="plus-circle"></span>
+            </a>
+          </h6>
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Merge Files
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Extract Locker
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Streamline
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main role="main" id="graph" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="entry-point">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">Overview</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary">Share</button>
+                <button class="btn btn-sm btn-outline-secondary">Export</button>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <span data-feather="calendar"></span>
+                This week
+              </button>
+            </div>
+          </div>
+
+          <!-- <div class="table-responsive">
+          <table class="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Header</th>
+                <th>Header</th>
+                <th>Header</th>
+                <th>Header</th>
+              </tr>
+            </thead>
+            <tbody id="table_point">
+
+            </tbody>
+          </table>
+        </div> -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+  <script src="../../assets/js/vendor/popper.min.js"></script>
+  <script src="../../dist/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <script>
+    var file_name = "";
+    var colors = ['p-3 mb-2 bg-primary text-white',
+      'p-3 mb-2 bg-secondary text-white',
+      'p-3 mb-2 bg-light text-dark',
+      'p-3 mb-2 bg-dark text-white',
+      'p-3 mb-2 bg-white text-dark'];
+
+    $("#open_file").click(function () {
+      file_name = $("#file_name").val();
+      $("#overview_button").trigger("click");
+    });
+
+    $("#overview_button").click(function () {
+      if (file_name != "") {
+        $.ajax({
+          type: "GET", url: "http://localhost:8000/", data: { file: file_name }, success: function (result) {
+
+            var data = JSON.parse(JSON.stringify(result))
+            var graph = $(".entry-point");
+
+            function rec_append(requestData, parentDiv) {
+              console.log('requestData is ', requestData);
+              console.log('parentDiv is ', parentDiv);
+              var temp_parent_details;
+
+              $.each(requestData, function (index, jsonElement) {
+                console.log('jsonElement is ', jsonElement);
+                console.log('its type is ', typeof jsonElement);
+
+                if (typeof jsonElement === 'string') {
+                  //Element construction
+
+                  //Name and other details in the form of a : delimited string
+
+                  var splitString = jsonElement.split(':');
+
+                  var details = document.createElement("details");
+                  var summary = document.createElement("summary");
+                  summary.innerText = splitString[0];
+                  details.append(summary);
+                  details.className = colors[Math.floor(Math.random() * 6)] + ' rounded';
+                  details.style = "margin: 12px;";
+                  parentDiv.append(details);
+
+                  var kbd = document.createElement("kbd");
+                  kbd.innerText = splitString[1];
+                  summary.append(' ');
+                  summary.append(kbd);
+
+                  var div = document.createElement("div");
+                  div.className = "col";
+                  details.append(div);
+                  temp_parent_details = div;
+
+                  var dl = document.createElement("dl");
+                  dl.className = "row";
+                  dl.style = "margin-top: 12px;";
+                  div.append(dl);
+
+                  var dt = document.createElement("dt");
+                  dt.className = "col-sm-1";
+                  dt.innerText = "Path";
+                  dl.append(dt);
+
+                  var dd = document.createElement("dd");
+                  dd.className = "col-sm-11";
+                  dd.innerText = splitString[2];
+                  dl.append(dd);
+
+                  var dt2 = document.createElement("dt");
+                  dt2.className = "col-sm-1";
+                  dt2.innerText = "Type";
+                  dl.append(dt2);
+
+                  var dd2 = document.createElement("dd");
+                  dd2.className = "col-sm-11";
+                  dd2.innerText = splitString[1];
+                  dl.append(dd2);
+
+                } else if (Array.isArray(jsonElement)) {
+                  if (typeof jsonElement[0] === 'object') {
+                    $.each(jsonElement, function (index, jsonChildElement) {
+                      rec_append(jsonChildElement, temp_parent_details);
+                    });
+                  } else {
+                    rec_append(jsonElement, temp_parent_details);
+                  }
+                }
+
+                //                 var html = `<details style="margin: 12px;">
+                // <summary>`+ value['name'] + `  <kbd>` + value['type'] + `</kbd></summary>
+                // <p></p><div class="col">
+                // <dl class="">
+                // <dt class="col-sm-1">Path</dt>
+                // <dd class="col-sm-11">`+ value['path'] + `</dd>
+
+                // <dt class="col-sm-1">Type</dt>
+                // <dd class="col-sm-11">`+ value['type'] + `</dd>
+                // </dl>
+                // </div><p></p>
+                // <details style="margin: 12px;">
+                // <summary>`+ value['name'] + `  <kbd>` + value['type'] + `</kbd></summary>
+                // <p></p><div class="col">
+                // <dl class="row">
+                // <dt class="col-sm-1">Path</dt>
+                // <dd class="col-sm-11">`+ value['path'] + `</dd>
+
+                // <dt class="col-sm-1">Type</dt>
+                // <dd class="col-sm-11">`+ value['type'] + `</dd>
+                // </dl>
+                // </div><p></p>
+                // </details>
+                // </details>`;
+
+              });
+            }
+
+            rec_append(data, graph);
+
+          }
+        });
+      }
+
+    });
+  </script>
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+  <script>
+    feather.replace()
+  </script>
+</body>
+
+</html>
