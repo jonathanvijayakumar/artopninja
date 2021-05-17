@@ -8,6 +8,8 @@ This project (POC) aims to read an ARXML extract using python and send JSON data
  * Extract editing feature
  * User account system and asynchronous usage for many users (like google slides)
  * AI
+ * Auto Mapping Feature
+ * System Generation
 
 # Usage
  * Open explorer.py and run it to start the server.
